@@ -8,7 +8,20 @@ namespace notebook
 {
     class Program
     {
-        static void Main(string[] args)
+        public static int TRYPARS()
+        {
+            
+            int pars;
+            while (!int.TryParse(Console.ReadLine(), out pars)) 
+            {
+                Console.SetCursorPosition(0, Console.CursorTop - 1);
+                Editor_notebook.ClearCurrentConsoleLine();
+                Console.Write("Ошибка ввода! Введите заново: ");
+            }
+            
+            return pars;
+        }
+     static void Main(string[] args)
         {
             int menu = 0, item;
             while(true){
@@ -17,8 +30,7 @@ namespace notebook
                     case 0:
                         Console.Clear();
                         Console.WriteLine("1.Новая запись \n2.Редактирование записи \n3.Удаление записи \n4.Показать все записи \n5.Выход");
-                        menu = Convert.ToInt32(Console.ReadLine());
-                        Console.WriteLine(menu);
+                        menu = TRYPARS();
                         break;
                     case 1:
                         Console.Clear();
@@ -30,23 +42,47 @@ namespace notebook
                         Console.Clear();
                         Editor_notebook.Show_Note();
                         Console.Write("Выберите номер записи, которую хотите отредактировать: ");
-                        item = Convert.ToInt32(Console.ReadLine());
-                        Editor_notebook.Show_single_Note(item-1);
-                        int sub_item = Convert.ToInt32(Console.ReadLine());
-                        Editor_notebook.Edit_Note(Editor_notebook.notelist[item-1], sub_item);
-                        Console.ReadKey();
-                        menu = 0;
-                        break;
+                        item = TRYPARS(); 
+                        Editor_notebook.Show_single_Note(item - 1);
+                        int sub_item = TRYPARS();
+                        if (sub_item <= 9 && sub_item >= 1 && Editor_notebook.notelist.Count > 0)
+                        {
+                            Editor_notebook.Edit_Note(Editor_notebook.notelist[item - 1], sub_item);
+                            Console.ReadKey();
+                            menu = 0;
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Данного элемента не существует");
+                            Console.ReadKey();
+                            menu = 0;
+                            break;
+                        }
                     case 3:
                         Console.Clear();
                         Editor_notebook.Show_Note();
                         Console.Write("Выберите номер записи, которую хотите удалить: ");
-                        item = Convert.ToInt32(Console.ReadLine());
+                        item = TRYPARS();
+                        if (Editor_notebook.notelist.Count < item)
+                        {
+                            Console.WriteLine("Данного элемента не существует");
+                            Console.ReadKey();
+                            menu = 0;
+                            break;
+                        }
                         Editor_notebook.Delete_Note(item-1);
                         Console.ReadKey();
                         menu = 0;
                         break;
                     case 4:
+                        if (Editor_notebook.notelist.Count < 1)
+                        {
+                            Console.WriteLine("Записи отсутствуют.");
+                            menu = 0;
+                            Console.ReadKey();
+                            break;
+                        }
                         Console.Clear();
                         Editor_notebook.Show_Note();
                         Console.ReadKey();
@@ -57,6 +93,7 @@ namespace notebook
                 }
             }
         }
+     
     }
 
     public struct Note
@@ -225,16 +262,21 @@ namespace notebook
         }
         public static void Show_single_Note(int item)
         {
-            Console.Clear();
-            Console.WriteLine("1. " + notelist[item].name);
-            Console.WriteLine("2. " + notelist[item].lastname);
-            Console.WriteLine("3. " + notelist[item].number);
-            Console.WriteLine("4. " + notelist[item].country);
-            Console.WriteLine("5. " + notelist[item].otname);
-            Console.WriteLine("6. " + notelist[item].date);
-            Console.WriteLine("7. " + notelist[item].org);
-            Console.WriteLine("8. " + notelist[item].pozichion);
-            Console.WriteLine("9. " + notelist[item].other_notes);
+            if (notelist.Count == 0) Console.WriteLine("Список пуст.");
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("1. " + notelist[item].name);
+                Console.WriteLine("2. " + notelist[item].lastname);
+                Console.WriteLine("3. " + notelist[item].number);
+                Console.WriteLine("4. " + notelist[item].country);
+                Console.WriteLine("5. " + notelist[item].otname);
+                Console.WriteLine("6. " + notelist[item].date);
+                Console.WriteLine("7. " + notelist[item].org);
+                Console.WriteLine("8. " + notelist[item].pozichion);
+                Console.WriteLine("9. " + notelist[item].other_notes);
+                Console.Write("Введите номер поля которое необходимо отредактировать: ");
+            }
         }
         public static void ClearCurrentConsoleLine()
         {
